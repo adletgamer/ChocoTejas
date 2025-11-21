@@ -3,9 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { BoxPreview } from "./BoxPreview";
+import { ColorSelector } from "./ColorSelector";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface PersonalizationModalProps {
   isOpen: boolean;
@@ -18,18 +20,10 @@ interface PersonalizationModalProps {
   } | null;
 }
 
-const BOX_COLORS = [
-  { value: "rojo", label: "Rojo Elegante", color: "bg-red-600" },
-  { value: "azul", label: "Azul Cielo", color: "bg-blue-600" },
-  { value: "verde", label: "Verde Menta", color: "bg-green-600" },
-  { value: "dorado", label: "Dorado Especial", color: "bg-yellow-600" },
-  { value: "rosa", label: "Rosa Romántico", color: "bg-pink-600" },
-  { value: "negro", label: "Negro Premium", color: "bg-gray-900" },
-];
-
 export const PersonalizationModal = ({ isOpen, onClose, product }: PersonalizationModalProps) => {
   const [boxColor, setBoxColor] = useState("");
   const [message, setMessage] = useState("");
+  const [includeNote, setIncludeNote] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -56,7 +50,7 @@ export const PersonalizationModal = ({ isOpen, onClose, product }: Personalizati
     const orderData = {
       product: product?.name,
       boxColor,
-      message: message || "Sin mensaje",
+      message: includeNote ? message : "Sin mensaje",
       quantity,
       total: (product?.price || 0) * quantity,
       customerName,
@@ -74,6 +68,7 @@ export const PersonalizationModal = ({ isOpen, onClose, product }: Personalizati
     // Reset form
     setBoxColor("");
     setMessage("");
+    setIncludeNote(false);
     setQuantity(1);
     setCustomerName("");
     setCustomerPhone("");
@@ -85,7 +80,7 @@ export const PersonalizationModal = ({ isOpen, onClose, product }: Personalizati
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">Personaliza tu Pedido</DialogTitle>
           <DialogDescription>
@@ -94,10 +89,16 @@ export const PersonalizationModal = ({ isOpen, onClose, product }: Personalizati
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-4">
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Vista Previa */}
+            <div className="order-2 lg:order-1">
+              <BoxPreview color={boxColor} message={includeNote ? message : ""} />
+            </div>
+
+            {/* Opciones de Personalización */}
+            <div className="space-y-6 order-1 lg:order-2">
               <div>
-                <Label htmlFor="quantity">Cantidad</Label>
+                <Label htmlFor="quantity" className="text-base font-semibold">Cantidad</Label>
                 <Input
                   id="quantity"
                   type="number"
@@ -108,79 +109,82 @@ export const PersonalizationModal = ({ isOpen, onClose, product }: Personalizati
                 />
               </div>
 
-              <div>
-                <Label htmlFor="boxColor">Color de Caja</Label>
-                <Select value={boxColor} onValueChange={setBoxColor}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue placeholder="Selecciona un color" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BOX_COLORS.map((color) => (
-                      <SelectItem key={color.value} value={color.value}>
-                        <div className="flex items-center gap-2">
-                          <div className={`w-4 h-4 rounded ${color.color}`}></div>
-                          {color.label}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <ColorSelector selectedColor={boxColor} onColorChange={setBoxColor} />
+
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="includeNote" 
+                    checked={includeNote}
+                    onCheckedChange={(checked) => setIncludeNote(checked as boolean)}
+                  />
+                  <Label 
+                    htmlFor="includeNote" 
+                    className="text-base font-semibold cursor-pointer"
+                  >
+                    ¿Deseas agregar una notita especial? 📝
+                  </Label>
+                </div>
+                
+                {includeNote && (
+                  <div className="animate-in slide-in-from-top-2 duration-300">
+                    <Textarea
+                      id="message"
+                      placeholder="Escribe tu mensaje especial aquí... (máx. 150 caracteres)"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      maxLength={150}
+                      rows={4}
+                      className="mt-2"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {message.length}/150 caracteres
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div>
-                <Label htmlFor="message">Mensaje Personalizado (Opcional)</Label>
-                <Textarea
-                  id="message"
-                  placeholder="Escribe un mensaje especial (máx. 150 caracteres)"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  maxLength={150}
-                  rows={4}
-                  className="mt-2"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {message.length}/150 caracteres
-                </p>
-              </div>
-            </div>
+              <div className="pt-4 border-t space-y-4">
+                <h3 className="font-semibold text-lg">Datos de Contacto</h3>
+                
+                <div>
+                  <Label htmlFor="customerName">Nombre Completo</Label>
+                  <Input
+                    id="customerName"
+                    type="text"
+                    placeholder="Juan Pérez"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    required
+                    className="mt-2"
+                  />
+                </div>
 
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Datos de Contacto</h3>
-              
-              <div>
-                <Label htmlFor="customerName">Nombre Completo</Label>
-                <Input
-                  id="customerName"
-                  type="text"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  required
-                  className="mt-2"
-                />
-              </div>
+                <div>
+                  <Label htmlFor="customerPhone">Teléfono</Label>
+                  <Input
+                    id="customerPhone"
+                    type="tel"
+                    placeholder="999 888 777"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    required
+                    className="mt-2"
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="customerPhone">Teléfono</Label>
-                <Input
-                  id="customerPhone"
-                  type="tel"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  required
-                  className="mt-2"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="customerAddress">Dirección de Entrega</Label>
-                <Textarea
-                  id="customerAddress"
-                  value={customerAddress}
-                  onChange={(e) => setCustomerAddress(e.target.value)}
-                  required
-                  rows={3}
-                  className="mt-2"
-                />
+                <div>
+                  <Label htmlFor="customerAddress">Dirección de Entrega</Label>
+                  <Textarea
+                    id="customerAddress"
+                    placeholder="Av. Principal 123, Miraflores, Lima"
+                    value={customerAddress}
+                    onChange={(e) => setCustomerAddress(e.target.value)}
+                    required
+                    rows={2}
+                    className="mt-2"
+                  />
+                </div>
               </div>
             </div>
           </div>
