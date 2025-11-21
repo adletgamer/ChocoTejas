@@ -1,12 +1,109 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { Hero } from "@/components/Hero";
+import { ProductCard } from "@/components/ProductCard";
+import { PersonalizationModal } from "@/components/PersonalizationModal";
+import chocotejaOreo from "@/assets/chocoteja-oreo.jpg";
+import chocotejaAlmendras from "@/assets/chocoteja-almendras.jpg";
+import chocotejaFrutosSecos from "@/assets/chocoteja-frutos-secos.jpg";
+import chocotejaClasica from "@/assets/chocoteja-clasica.jpg";
+
+const PRODUCTS = [
+  {
+    id: "oreo",
+    name: "Chocoteja Oreo",
+    description: "Delicioso chocolate con trozos de galleta Oreo crujiente",
+    price: 25.00,
+    image: chocotejaOreo,
+  },
+  {
+    id: "almendras",
+    name: "Chocoteja de Almendras",
+    description: "Chocolate premium con almendras tostadas seleccionadas",
+    price: 28.00,
+    image: chocotejaAlmendras,
+  },
+  {
+    id: "frutos-secos",
+    name: "Chocoteja de Frutos Secos",
+    description: "Mezcla especial de frutos secos y chocolate artesanal",
+    price: 30.00,
+    image: chocotejaFrutosSecos,
+  },
+  {
+    id: "clasica",
+    name: "Chocoteja Clásica",
+    description: "La receta tradicional peruana que todos aman",
+    price: 22.00,
+    image: chocotejaClasica,
+  },
+];
 
 const Index = () => {
+  const [selectedProduct, setSelectedProduct] = useState<typeof PRODUCTS[0] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOrderClick = (product: typeof PRODUCTS[0]) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen">
+      <Hero />
+      
+      <section id="productos" className="py-20 px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Nuestros <span className="bg-gradient-primary bg-clip-text text-transparent">Sabores</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Cada chocoteja es elaborada artesanalmente con ingredientes de primera calidad
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            {PRODUCTS.map((product) => (
+              <ProductCard
+                key={product.id}
+                {...product}
+                onOrderClick={handleOrderClick}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="container mx-auto text-center max-w-3xl">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            ¿Por qué elegirnos?
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
+            <div className="space-y-3">
+              <div className="text-4xl mb-4">🎁</div>
+              <h3 className="text-xl font-semibold">Personalización Total</h3>
+              <p className="text-muted-foreground">Elige el color de la caja y añade tu mensaje especial</p>
+            </div>
+            <div className="space-y-3">
+              <div className="text-4xl mb-4">✨</div>
+              <h3 className="text-xl font-semibold">Calidad Premium</h3>
+              <p className="text-muted-foreground">Ingredientes seleccionados y elaboración artesanal</p>
+            </div>
+            <div className="space-y-3">
+              <div className="text-4xl mb-4">🚚</div>
+              <h3 className="text-xl font-semibold">Entrega Rápida</h3>
+              <p className="text-muted-foreground">Llevamos tus chocotejas frescas a tu puerta</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <PersonalizationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+      />
     </div>
   );
 };
