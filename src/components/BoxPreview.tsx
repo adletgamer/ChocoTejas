@@ -46,12 +46,7 @@ export const BoxPreview = ({ color, message }: BoxPreviewProps) => {
           </div>
 
           {/* Sombra de la caja */}
-          <div 
-            className="absolute inset-0 bg-black/20 blur-2xl rounded-full"
-            style={{
-              transform: "translateY(120%) scale(0.8)",
-            }}
-          ></div>
+          
         </div>
 
         {/* Notita adhesiva */}

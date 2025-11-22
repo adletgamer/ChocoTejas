@@ -17,8 +17,8 @@ const PRODUCTS = [
   },
   {
     id: "almendras",
-    name: "Chocoteja de Almendras",
-    description: "Chocolate premium con almendras tostadas seleccionadas",
+    name: "Chocoteja de Frutos Rojos",
+    description: "Chocolate premium con pecanas tostadas seleccionadasy frutos rojos organicos",
     price: 28.00,
     image: chocotejaAlmendras,
   },
@@ -31,8 +31,8 @@ const PRODUCTS = [
   },
   {
     id: "clasica",
-    name: "Chocoteja Clásica",
-    description: "La receta tradicional peruana que todos aman",
+    name: "Chocoteja de Aguaymantos",
+    description: "Una mezcla amazonica con sabores exoticos que todos aman",
     price: 22.00,
     image: chocotejaClasica,
   },
