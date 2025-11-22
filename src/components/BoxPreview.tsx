@@ -6,27 +6,44 @@ interface BoxPreviewProps {
   message: string;
 }
 
-const COLOR_MAP: Record<string, { bg: string; shadow: string; label: string }> = {
-  rojo: { bg: "bg-red-600", shadow: "shadow-red-500/50", label: "Rojo Elegante" },
-  azul: { bg: "bg-blue-600", shadow: "shadow-blue-500/50", label: "Azul Cielo" },
-  dorado: { bg: "bg-yellow-600", shadow: "shadow-yellow-500/50", label: "Dorado Especial" },
-};
+const COLOR_MAP: Record<string, { bg: string; shadow: string; label: string }> =
+  {
+    rojo: {
+      bg: "bg-red-600",
+      shadow: "shadow-red-500/50",
+      label: "Rojo Elegante",
+    },
+    azul: {
+      bg: "bg-blue-600",
+      shadow: "shadow-blue-500/50",
+      label: "Azul Cielo",
+    },
+    dorado: {
+      bg: "bg-yellow-600",
+      shadow: "shadow-yellow-500/50",
+      label: "Dorado Especial",
+    },
+  };
 
 export const BoxPreview = ({ color, message }: BoxPreviewProps) => {
-  const selectedColor = COLOR_MAP[color] || { bg: "bg-muted", shadow: "", label: "Selecciona un color" };
+  const selectedColor = COLOR_MAP[color] || {
+    bg: "bg-muted",
+    shadow: "",
+    label: "Selecciona un color",
+  };
 
   return (
-    <Card className="p-8 bg-gradient-to-br from-muted/30 to-background">
-      <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold mb-2">Vista Previa de tu Caja</h3>
-        <p className="text-sm text-muted-foreground">{selectedColor.label}</p>
+    <Card className="p-6 bg-gradient-to-br from-muted/30 to-background w-full h-full flex flex-col justify-center">
+      <div className="text-center mb-8">
+        <h3 className="text-xl font-semibold mb-2">Vista Previa de tu Caja</h3>
+        <p className="text-base text-muted-foreground">{selectedColor.label}</p>
       </div>
 
-      <div className="relative aspect-square max-w-sm mx-auto">
+      <div className="relative aspect-square w-full max-w-md mx-auto">
         {/* Caja 3D */}
         <div className="relative w-full h-full perspective-1000">
           {/* Tapa de la caja */}
-          <div 
+          <div
             className={`absolute inset-0 ${selectedColor.bg} rounded-lg transform transition-all duration-500 hover:scale-105 ${selectedColor.shadow} shadow-2xl`}
             style={{
               transform: "rotateX(15deg) rotateY(-10deg)",
@@ -35,10 +52,10 @@ export const BoxPreview = ({ color, message }: BoxPreviewProps) => {
           >
             {/* Efecto de brillo */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-lg"></div>
-            
+
             {/* Ribbon/Lazo decorativo */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <Package className="w-16 h-16 text-white/40" strokeWidth={1.5} />
+              <Package className="w-24 h-24 text-white/40" strokeWidth={1.5} />
             </div>
 
             {/* Bordes para efecto 3D */}
@@ -46,12 +63,11 @@ export const BoxPreview = ({ color, message }: BoxPreviewProps) => {
           </div>
 
           {/* Sombra de la caja */}
-          
         </div>
 
         {/* Notita adhesiva */}
         {message && (
-          <div 
+          <div
             className="absolute -right-4 -top-4 w-32 h-32 bg-yellow-100 shadow-lg transform rotate-12 transition-all duration-300 hover:rotate-6 hover:scale-105"
             style={{
               boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
